@@ -2,7 +2,7 @@ import unittest
 from textnode import TextType, TextNode
 from htmlnode import LeafNode
 # Import your converter function from wherever you placed it
-from converter import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from converter import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image
 
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text_node(self):
@@ -116,6 +116,7 @@ class TestSplitDelimiter(unittest.TestCase):
         assert len(new_nodes) == 1
         assert new_nodes[0].text == "Already bold node"
         assert new_nodes[0].text_type == TextType.BOLD
+
 class TestMarkdownExtraction(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
@@ -129,6 +130,105 @@ class TestMarkdownExtraction(unittest.TestCase):
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
         )
         self.assertListEqual([("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")], matches)
+
+class TestSPlitShit(unittest.TestCase):
+
+    def test_no_links(self):
+        node = TextNode("This is plain text with no links.", TextType.NORMAL)
+        result = split_nodes_link([node])
+        self.assertListEqual(result, [node])
+
+    def test_multiple_links(self):
+        node = TextNode(
+            "Here is [link one](http://example1.com) and [link two](http://example2.com).",
+            TextType.NORMAL,
+        )
+        result = split_nodes_link([node])
+        expected = [
+            TextNode("Here is ", TextType.NORMAL),
+            TextNode("link one", TextType.LINK, "http://example1.com"),
+            TextNode(" and ", TextType.NORMAL),
+            TextNode("link two", TextType.LINK, "http://example2.com"),
+            TextNode(".", TextType.NORMAL),
+        ]
+        self.assertListEqual(result, expected)
+
+    def test_malformed_links(self):
+        node = TextNode(
+            "Here is a [link without closing brackets](http://example.com",
+            TextType.NORMAL,
+        )
+        result = split_nodes_link([node])
+        self.assertListEqual(result, [node])  # Malformed content should remain untouched
+
+
+    def test_split_single_image(self):
+        node = TextNode(
+            "This text has an ![image](http://example.com/image.png).",
+            TextType.NORMAL,
+        )
+        result = split_nodes_image([node])
+        expected = [
+            TextNode("This text has an ", TextType.NORMAL),
+            TextNode("image", TextType.IMAGE, "http://example.com/image.png"),
+            TextNode(".", TextType.NORMAL),
+        ]
+        self.assertListEqual(result, expected)
+
+    def test_no_images(self):
+        node = TextNode("This is plain text with no images.", TextType.NORMAL)
+        result = split_nodes_image([node])
+        self.assertListEqual(result, [node])
+    def test_split_single_link(self):
+        # Input node contains one link
+        node = TextNode(
+            "This is text with a [link](https://www.example.com)",
+            TextType.NORMAL,
+        )
+        result = split_nodes_link([node])
+        
+        # Expected split nodes
+        expected = [
+            TextNode("This is text with a ", TextType.NORMAL),
+            TextNode("link", TextType.LINK, "https://www.example.com"),
+        ]
+        
+        self.assertListEqual(result, expected)
+
+
+    def test_multiple_images(self):
+        node = TextNode(
+            "Here is one ![image1](http://example.com/image1.png) and another ![image2](http://example.com/image2.png).",
+            TextType.NORMAL,
+        )
+        result = split_nodes_image([node])
+        expected = [
+            TextNode("Here is one ", TextType.NORMAL),
+            TextNode("image1", TextType.IMAGE, "http://example.com/image1.png"),
+            TextNode(" and another ", TextType.NORMAL),
+            TextNode("image2", TextType.IMAGE, "http://example.com/image2.png"),
+            TextNode(".", TextType.NORMAL),
+        ]
+        self.assertListEqual(result, expected)
+
+    def test_malformed_images(self):
+        node = TextNode(
+            "Here is an image with missing brackets ![image(http://example.com/image.png",
+            TextType.NORMAL,
+        )
+        result = split_nodes_image([node])
+        self.assertListEqual(result, [node])  # Malformed content should remain untouched
+
+"""
+    def test_empty_text(self):
+        node = TextNode("", TextType.NORMAL)
+        result = split_nodes_image([node])
+        self.assertListEqual(result, [node])  # No work to do for an empty node
+"""
+
+
+
+
 
 
 

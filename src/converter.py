@@ -2,7 +2,6 @@ from textnode import TextType, TextNode
 from htmlnode import HTMLNode, LeafNode
 import re
 
-
 def text_node_to_html_node(text_node):
     if text_node.text_type is TextType.NORMAL:
         return LeafNode(None, text_node.text)
@@ -24,7 +23,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_node_list = []
     for node in old_nodes:
         if delimiter not in node.text:
-            return old_nodes
+            new_node_list.append(node)
+            continue
         if node.text_type is not TextType.NORMAL:
             new_node_list.append(node)
 
@@ -37,6 +37,49 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 new_text_node = TextNode(new_node_split[i], new_text_type)
                 new_node_list.append(new_text_node)
     return new_node_list
+
+def split_nodes_image(old_nodes):
+    new_node_list = []
+    for node in old_nodes:
+        var = re.split(r"(!\[[^\[\]]*\]\([^\(\)]*\))", node.text)
+        for substring in var:
+            sub_substring = extract_markdown_images(substring)
+            if len(sub_substring) > 0:
+                new_node = TextNode(sub_substring[0][0], TextType.IMAGE, sub_substring[0][1])
+            else:
+                new_node = TextNode(substring, node.text_type)
+            if new_node.text != "" and new_node.text != None:
+                new_node_list.append(new_node)
+    return new_node_list
+
+
+def split_nodes_link(old_nodes):
+    new_node_list = []
+    for node in old_nodes:
+        var = re.split(r"((?<!!)\[[^\[\]]*\]\([^\(\)]*\))", node.text)
+        for substring in var:
+            sub_substring = extract_markdown_links(substring)
+            if len(sub_substring) > 0:
+                new_node = TextNode(sub_substring[0][0], TextType.LINK, sub_substring[0][1])
+            else:
+                new_node = TextNode(substring, node.text_type)
+            if new_node.text != "" and new_node.text != None:
+                new_node_list.append(new_node)
+    return new_node_list
+
+def textnodes_to_text(text):
+    new_nodes_list = []
+    old_nodes = [TextNode(text, TextType.NORMAL)]
+    new_nodes_list = split_nodes_delimiter(old_nodes, "**", TextType.BOLD)
+    new_nodes_list = split_nodes_delimiter(new_nodes_list, "_", TextType.ITALIC)
+    new_nodes_list = split_nodes_delimiter(new_nodes_list, "`", TextType.CODE)
+    new_nodes_list = split_nodes_link(new_nodes_list)
+    new_nodes_list = split_nodes_image(new_nodes_list)
+    
+
+
+    return new_nodes_list
+
 
 
 def extract_markdown_images(text):
