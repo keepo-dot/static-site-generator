@@ -2,7 +2,7 @@ import unittest
 from textnode import TextType, TextNode
 from htmlnode import LeafNode
 # Import your converter function from wherever you placed it
-from converter import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image
+from converter import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, markdown_to_blocks
 
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text_node(self):
@@ -227,10 +227,25 @@ class TestSPlitShit(unittest.TestCase):
 """
 
 
+def test_markdown_to_blocks(self):
+    md = """
+This is **bolded** paragraph
 
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
 
-
-
+- This is a list
+- with items
+"""
+    blocks = markdown_to_blocks(md)
+    self.assertEqual(
+        blocks,
+        [
+            "This is **bolded** paragraph",
+            "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+            "- This is a list\n- with items",
+        ],
+    )
 
 
 
