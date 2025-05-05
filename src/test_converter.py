@@ -3,6 +3,7 @@ from textnode import TextType, TextNode
 from htmlnode import LeafNode
 # Import your converter function from wherever you placed it
 from converter import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, markdown_to_blocks
+from blocks import block_to_blocktype, BlockType
 
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text_node(self):
@@ -248,6 +249,24 @@ This is the same paragraph on a new line
     )
 
 
+
+class TestBlockTypeDetection(unittest.TestCase):
+    def test_heading_block(self):
+        # Test cases for different heading levels
+        self.assertEqual(block_to_blocktype("# Heading 1"), BlockType.HEADING)
+        self.assertEqual(block_to_blocktype("## Heading 2"), BlockType.HEADING)
+        # Add more heading level tests...
+        
+    def test_code_block(self):
+        # Simple code block
+        self.assertEqual(block_to_blocktype("```\nsome code\n```"), BlockType.CODE)
+        # Code block with language specification
+        self.assertEqual(block_to_blocktype("```python\nprint('hello')\n```"), BlockType.CODE)
+        
+    # Continue with more test methods...
+    def test_num_list(self):
+        self.assertEqual(block_to_blocktype("1. List item"), BlockType.ORDERED_LIST)
+        self.assertEqual(block_to_blocktype("9. List Item"), BlockType.ORDERED_LIST)
 
 if __name__ == "__main__":
     unittest.main()
