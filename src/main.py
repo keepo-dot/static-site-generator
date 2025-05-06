@@ -1,20 +1,13 @@
-from textnode import TextNode
-
-from textnode import TextType
-
-
+from static_copy import copy_files
 
 
 def main():
-    textnode_object = TextNode("This is some text.", TextType.NORMAL_TEXT, )
-    print(textnode_object)
-
-
-
+    copy_files("static", "public")
     return
 
 
-main()
+if __name__ == "__main__":
+    main()
 
 
 
