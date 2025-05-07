@@ -35,8 +35,24 @@ class TestHTMLNode(unittest.TestCase):
         self.assertIn("div", repr_str)
         self.assertIn("Content", repr_str)
         self.assertIn("container", repr_str)
-
-
+    
+    def test_to_html_props(self):
+        node = HTMLNode(
+            "div",
+            "Hello, world!",
+            None,
+            {"class": "greeting", "href": "https://boot.dev"},
+        )
+        self.assertEqual(
+            node.props_to_html(),
+            ' class="greeting" href="https://boot.dev"',
+        )
+    def test_leaf_to_html_a(self):
+        node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
+        self.assertEqual(
+            node.to_html(),
+            '<a href="https://www.google.com">Click me!</a>',
+        )
     #Leaf node tests.
 class TestLeafNode(unittest.TestCase):
 

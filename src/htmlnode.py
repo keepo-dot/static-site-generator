@@ -31,20 +31,23 @@ class HTMLNode:
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
         super().__init__(tag=tag, props=props)
-        if props is None:
-            self.props = {}
+        #if props is None:
+        #    self.props = {}
         if value is None:
             raise ValueError("LeafNode must have a value.")
         self.value = value
+        self.props = props
 
 
     def to_html(self):
-        if not self.value:
+        if self.value == None:
             print("DEBUG: node missing value:", self)
             raise ValueError("'value' property must contain a value.")
         if self.tag is None or self.tag == "":
             return self.value
-        return f"<{self.tag}>{self.value}</{self.tag}>"
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+
+
 
 
 class ParentNode(HTMLNode):

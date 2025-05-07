@@ -12,7 +12,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
         self.assertEqual(html_node.value, "This is normal text")
-        self.assertEqual(html_node.props, {})
+        self.assertEqual(html_node.props, None)
 
     def test_bold_node(self):
         # Test for bold text conversion
@@ -20,7 +20,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "b")
         self.assertEqual(html_node.value, "This is bold text")
-        self.assertEqual(html_node.props, {})
+        self.assertEqual(html_node.props, None)
 
     def test_italic_node(self):
         # Test for italic text conversion
@@ -28,7 +28,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "i")
         self.assertEqual(html_node.value, "This is italic text")
-        self.assertEqual(html_node.props, {})
+        self.assertEqual(html_node.props, None)
 
     def test_code_node(self):
         # Test for code text conversion
@@ -36,7 +36,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "code")
         self.assertEqual(html_node.value, "print('Hello World')")
-        self.assertEqual(html_node.props, {})
+        self.assertEqual(html_node.props, None)
     
     def test_link_node(self):
         # Test for link conversion
