@@ -40,6 +40,7 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         if not self.value:
+            print("DEBUG: node missing value:", self)
             raise ValueError("'value' property must contain a value.")
         if self.tag is None or self.tag == "":
             return self.value
