@@ -15,7 +15,8 @@ def generate_page(from_path, template_path, dest_path, basepath="/"):
     if "{{ Title }}" not in html_template or "{{ Content }}" not in html_template:
         raise Exception("Template is missing '{{ Title }}' or '{{ Content }}' placeholder.")
     updated_template = html_template.replace("{{ Title }}", extracted_title).replace("{{ Content }}", content_to_html)
-    updated_template = updated_template.replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
+    updated_template = updated_template.replace('href="/', f'href="{basepath}')
+    updated_template = updated_template.replace('src="/', f'src="{basepath}')
 
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
