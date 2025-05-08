@@ -24,7 +24,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
         f.write(updated_template)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath="/", content_root=None):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath, content_root=None):
     
     if content_root is None:
         content_root = dir_path_content
