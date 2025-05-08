@@ -2,7 +2,7 @@ from blocks import markdown_to_html_node
 from extract_title import extract_title
 import os
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath="/"):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path) as f:
         from_path_content = f.read()
@@ -15,6 +15,7 @@ def generate_page(from_path, template_path, dest_path):
     if "{{ Title }}" not in html_template or "{{ Content }}" not in html_template:
         raise Exception("Template is missing '{{ Title }}' or '{{ Content }}' placeholder.")
     updated_template = html_template.replace("{{ Title }}", extracted_title).replace("{{ Content }}", content_to_html)
+    updated_template = updated_template.replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
 
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
@@ -22,7 +23,7 @@ def generate_page(from_path, template_path, dest_path):
         f.write(updated_template)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, content_root=None):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath="/", content_root=None):
     
     if content_root is None:
         content_root = dir_path_content
@@ -37,19 +38,8 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, con
             relative_path = os.path.relpath(path_to_thing, start = content_root)
             root, ext = os.path.splitext(relative_path)
             dest_path = os.path.join(dest_dir_path, root + '.html')
-            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-
-
-            html_content = markdown_to_html_node(file_content).to_html()
-            extracted_title = extract_title(file_content)
-            with open(template_path) as f:
-                template_content = f.read()
-            updated_template = template_content.replace("{{ Title }}", extracted_title).replace("{{ Content }}", html_content)
-
-            with open(dest_path, "w") as f:
-                f.write(updated_template)
-
+            generate_page(path_to_thing, template_path, dest_path, basepath)
 
         if os.path.isdir(path_to_thing):
             new_dir_path = os.path.join(dir_path_content, thing)
-            generate_pages_recursive(new_dir_path, template_path, dest_dir_path, content_root)
+            generate_pages_recursive(new_dir_path, template_path, dest_dir_path, basepath, content_root)
