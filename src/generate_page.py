@@ -2,7 +2,7 @@ from blocks import markdown_to_html_node
 from extract_title import extract_title
 import os
 
-def generate_page(from_path, template_path, dest_path, basepath):
+def generate_page(from_path, template_path, dest_path, basepath="/"):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path) as f:
         from_path_content = f.read()
@@ -15,8 +15,8 @@ def generate_page(from_path, template_path, dest_path, basepath):
     if "{{ Title }}" not in html_template or "{{ Content }}" not in html_template:
         raise Exception("Template is missing '{{ Title }}' or '{{ Content }}' placeholder.")
     updated_template = html_template.replace("{{ Title }}", extracted_title).replace("{{ Content }}", content_to_html)
-    replaced_template = updated_template.replace('href="/', f'href="{basepath}')
-    replaced_template = updated_template.replace('src="/', f'src="{basepath}')
+    replaced_template = updated_template.replace('href="/', 'href="{}'.format(basepath))
+    replaced_template = updated_template.replace('src="/', 'src="{}'.format(basepath))
 
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
@@ -24,7 +24,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
         f.write(replaced_template)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath, content_root=None):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath="/", content_root=None):
     
     if content_root is None:
         content_root = dir_path_content
