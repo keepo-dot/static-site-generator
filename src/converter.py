@@ -41,6 +41,9 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 def split_nodes_image(old_nodes):
     new_node_list = []
     for node in old_nodes:
+        if node.text_type != TextType.NORMAL:
+            new_node_list.append(node)
+            continue
         var = re.split(r"(!\[[^\[\]]*\]\([^\(\)]*\))", node.text)
         for substring in var:
             sub_substring = extract_markdown_images(substring)
@@ -56,6 +59,10 @@ def split_nodes_image(old_nodes):
 def split_nodes_link(old_nodes):
     new_node_list = []
     for node in old_nodes:
+        if node.text_type != TextType.NORMAL:
+            new_node_list.append(node)
+            continue
+
         var = re.split(r"((?<!!)\[[^\[\]]*\]\([^\(\)]*\))", node.text)
         for substring in var:
             sub_substring = extract_markdown_links(substring)

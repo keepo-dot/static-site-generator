@@ -30,7 +30,7 @@ class HTMLNode:
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
-        super().__init__(tag=tag, props=props)
+        super().__init__(tag=tag)
         #if props is None:
         #    self.props = {}
         if value is None:
