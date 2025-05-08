@@ -2,7 +2,7 @@ from blocks import markdown_to_html_node
 from extract_title import extract_title
 import os
 
-def generate_page(from_path, template_path, dest_path, basepath="/"):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path) as f:
         from_path_content = f.read()
